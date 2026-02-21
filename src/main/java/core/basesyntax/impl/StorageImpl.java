@@ -3,6 +3,7 @@ package core.basesyntax.impl;
 import core.basesyntax.Storage;
 import java.util.Objects;
 
+@SuppressWarnings("unchecked")
 public class StorageImpl<K, V> implements Storage<K, V> {
 
     private static final int CAPACITY = 10;
@@ -11,7 +12,6 @@ public class StorageImpl<K, V> implements Storage<K, V> {
     private final V[] values;
     private int size;
 
-    @SuppressWarnings("unchecked")
     public StorageImpl() {
         keys = (K[]) new Object[CAPACITY];
         values = (V[]) new Object[CAPACITY];
@@ -20,11 +20,12 @@ public class StorageImpl<K, V> implements Storage<K, V> {
 
     @Override
     public void put(K key, V value) {
-        for (int i = 0; i < size; i++) {
-            if (Objects.equals(keys[i], key)) {
-                values[i] = value;
-                return;
-            }
+        int index = findKeyIndex(key);
+
+        if (index != -1) {
+            values[index] = value;
+            return;
+
         }
 
         if (size < CAPACITY) {
@@ -38,16 +39,25 @@ public class StorageImpl<K, V> implements Storage<K, V> {
 
     @Override
     public V get(K key) {
-        for (int i = 0; i < this.size; ++i) {
-            if (Objects.equals(this.keys[i], key)) {
-                return this.values[i];
-            }
-        }
-        return null;
+        int index = findKeyIndex(key);
+        return index == -1 ? null : values[index];
     }
 
     @Override
     public int size() {
         return size;
+    }
+
+    private int findKeyIndex(K key) {
+        for (int i = 0; i < size; i++) {
+            if (isEqual(keys[i], key)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private boolean isEqual(K k1, K k2) {
+        return Objects.equals(k1, k2);
     }
 }
