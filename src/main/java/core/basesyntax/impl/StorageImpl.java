@@ -1,7 +1,6 @@
 package core.basesyntax.impl;
 
 import core.basesyntax.Storage;
-import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 public class StorageImpl<K, V> implements Storage<K, V> {
@@ -58,6 +57,7 @@ public class StorageImpl<K, V> implements Storage<K, V> {
     }
 
     private boolean isEqual(K k1, K k2) {
-        return Objects.equals(k1, k2);
+        boolean b = k1 == null ? k2 == null : k1.equals(k2);
+        return b;
     }
 }
